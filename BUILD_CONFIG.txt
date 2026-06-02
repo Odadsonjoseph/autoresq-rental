@@ -1,0 +1,30 @@
+AUTORESQ RENTAL - BUILD CONFIG
+
+RULE: Each build gets its own NEW Supabase project - NEVER connect to previous projects.
+
+=== COMPLETED ===
+- GitHub push: https://github.com/Odadsonjoseph/autoresq-rental
+- Vercel deploy: https://autoresq-rental.vercel.app
+
+=== NEEDED FOR DATABASE ===
+- Fresh Supabase access token required
+- Or manually create new project at supabase.com/dashboard
+
+=== HOW TO PROVIDE FRESH TOKEN ===
+1. Go to: https://supabase.com/dashboard/account/tokens
+2. Create new personal access token (ensure Projects: Write scope)
+3. Share the token with me
+
+=== HOW TO CREATE PROJECT MANUALLY ===
+1. Go to: https://supabase.com/dashboard
+2. Click "New Project"
+3. Name: “autoresq-rental”
+4. Wait 2 min for setup
+5. Go to Project Settings → API
+6. Provide project URL + anon key
+
+With either option, I'll:
+- Create fresh database for AutoresQ only
+- Run schema/migrations
+- Connect to Vercel env vars
+- Never touch any previous project
