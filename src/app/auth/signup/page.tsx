@@ -12,9 +12,26 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [companyName, setCompanyName] = useState('');
+  const [companySlug, setCompanySlug] = useState('');
+  const [isBroker, setIsBroker] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '')
+      .substring(0, 30);
+  };
+
+  const handleCompanyNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCompanyName(e.target.value);
+    if (!companySlug || companySlug === generateSlug(companyName)) {
+      setCompanySlug(generateSlug(e.target.value));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,18 +50,50 @@ export default function SignupPage() {
       return;
     }
 
+    if (companyName && !companySlug) {
+      setError('Company URL is required');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const { error } = await supabase.auth.signUp({
+      // First create auth user
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             full_name: fullName,
-            company_name: companyName,
           },
         },
       });
-      if (error) throw error;
+
+      if (authError) throw authError;
+
+      if (!authData.user) {
+        throw new Error('Failed to create user');
+      }
+
+      // If company info provided, create company via API
+      if (companyName && companySlug) {
+        const response = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            company_name: companyName,
+            company_slug: companySlug,
+            is_broker: isBroker,
+          }),
+        });
+
+        const companyData = await response.json();
+        if (!response.ok) {
+          // Clean up auth user if company creation fails
+          await supabase.auth.deleteUser(authData.user.id);
+          throw new Error(companyData.error || 'Failed to create company');
+        }
+      }
+
       setSuccess(true);
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : 'An error occurred';
@@ -107,10 +156,37 @@ export default function SignupPage() {
               <input
                 type="text"
                 value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
+                onChange={handleCompanyNameChange}
                 placeholder="Your Company LLC"
                 autoComplete="organization"
               />
+            </div>
+
+            <div className="form-group">
+              <label>Company URL Slug (Optional)</label>
+              <input
+                type="text"
+                value={companySlug}
+                onChange={(e) => setCompanySlug(generateSlug(e.target.value))}
+                placeholder="your-company"
+                autoComplete="off"
+              />
+              {companySlug && (
+                <small style={{ color: 'var(--gray)', display: 'block', marginTop: '0.25rem' }}>
+                  Your white-label URL: /company/{companySlug}
+                </small>
+              )}
+            </div>
+
+            <div className="form-group">
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={isBroker}
+                  onChange={(e) => setIsBroker(e.target.checked)}
+                />
+                I'm a broker (reseller)
+              </label>
             </div>
 
             <div className="form-group">
