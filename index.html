@@ -6,6 +6,7 @@
   <title>AutoresQ Rental - Premium Car Rental Platform</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --primary: #c9a227;
@@ -16,6 +17,8 @@
       --white: #ffffff;
       --text: #1a1a1a;
       --text-light: #666666;
+      --success: #2ecc71;
+      --error: #e74c3c;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -36,6 +39,8 @@
       pointer-events: none;
       z-index: 0;
     }
+
+    /* Header */
     header {
       background: var(--white);
       padding: 1.5rem 5%;
@@ -61,9 +66,10 @@
       font-weight: 600;
       color: var(--secondary);
       letter-spacing: 2px;
+      text-decoration: none;
     }
     .logo span { color: var(--primary); }
-    nav { display: flex; gap: 3rem; }
+    nav { display: flex; gap: 3rem; align-items: center; }
     nav a {
       color: var(--text);
       text-decoration: none;
@@ -72,6 +78,7 @@
       letter-spacing: 1px;
       text-transform: uppercase;
       position: relative;
+      cursor: pointer;
     }
     nav a::after {
       content: '';
@@ -84,6 +91,34 @@
       transition: width 0.3s ease;
     }
     nav a:hover::after { width: 100%; }
+    .btn {
+      display: inline-block;
+      background: var(--primary);
+      color: var(--secondary);
+      padding: 1rem 2.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.4s ease;
+      border: none;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--primary);
+      color: var(--secondary);
+    }
+    .btn-outline:hover {
+      background: var(--primary);
+    }
+
+    /* Hero */
     .hero {
       min-height: 100vh;
       display: flex;
@@ -147,24 +182,6 @@
       max-width: 450px;
       font-weight: 300;
     }
-    .btn {
-      display: inline-block;
-      background: var(--primary);
-      color: var(--secondary);
-      padding: 1rem 2.5rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      text-decoration: none;
-      transition: all 0.4s ease;
-      border: none;
-      cursor: pointer;
-    }
-    .btn:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-    }
     .hero-image {
       display: flex;
       justify-content: center;
@@ -177,6 +194,8 @@
       border-radius: 200px 200px 0 0;
       box-shadow: 0 30px 60px rgba(0,0,0,0.3);
     }
+
+    /* Sections */
     .section { padding: 8rem 5%; position: relative; z-index: 1; }
     .section-header { text-align: center; max-width: 600px; margin: 0 auto 4rem; }
     .section-label {
@@ -208,6 +227,7 @@
       text-align: center;
       transition: all 0.5s ease;
       border: 1px solid rgba(0,0,0,0.05);
+      cursor: pointer;
     }
     .feature-card:hover {
       transform: translateY(-10px);
@@ -233,7 +253,7 @@
     }
     .feature-card p { font-size: 0.9rem; color: var(--text-light); }
 
-    /* How It Works */
+    /* Steps */
     .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; max-width: 1200px; margin: 0 auto; }
     .step { text-align: center; position: relative; }
     .step-number {
@@ -251,8 +271,210 @@
       font-size: 1.3rem;
       margin-bottom: 0.5rem;
       margin-top: 1rem;
+      color: var(--white);
     }
-    .step p { font-size: 0.85rem; color: var(--text-light); }
+    .step p { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--white);
+      max-width: 500px;
+      width: 100%;
+      padding: 3rem;
+      position: relative;
+      animation: modalIn 0.3s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-light);
+    }
+    .modal h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--secondary);
+    }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      color: var(--text-light);
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 1rem;
+      border: 1px solid rgba(0,0,0,0.1);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .form-group .btn { width: 100%; }
+    .form-footer {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+    .form-footer a { color: var(--primary); cursor: pointer; }
+
+    /* Dashboard */
+    .dashboard { display: none; }
+    .dashboard.active { display: block; }
+    .main-content { padding-top: 80px; }
+    .dashboard-header {
+      background: var(--white);
+      padding: 2rem 5%;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .dashboard-header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      color: var(--secondary);
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: calc(100vh - 80px);
+    }
+    .sidebar {
+      background: var(--white);
+      padding: 2rem;
+      border-right: 1px solid rgba(0,0,0,0.05);
+    }
+    .sidebar-menu { list-style: none; }
+    .sidebar-menu li { margin-bottom: 0.5rem; }
+    .sidebar-menu a {
+      display: block;
+      padding: 0.8rem 1rem;
+      color: var(--text);
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .sidebar-menu a:hover, .sidebar-menu a.active {
+      background: var(--primary);
+      color: var(--secondary);
+    }
+    .dashboard-content { padding: 2rem; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    .stat-card h3 {
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 0.5rem;
+    }
+    .stat-card .value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      color: var(--secondary);
+    }
+    .vehicles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .vehicle-card {
+      background: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+    .vehicle-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .vehicle-image {
+      height: 200px;
+      background: var(--tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-size: 3rem;
+    }
+    .vehicle-info { padding: 1.5rem; }
+    .vehicle-info h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+    .vehicle-info .price {
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+    .vehicle-info .status {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+    .status.active { background: rgba(46, 204, 113, 0.1); color: var(--success); }
+    .status.reserved { background: rgba(201, 162, 39, 0.1); color: var(--primary); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      padding: 1rem 2rem;
+      background: var(--secondary);
+      color: var(--white);
+      border-radius: 8px;
+      z-index: 3000;
+      transform: translateX(150%);
+      transition: transform 0.3s ease;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.success { background: var(--success); }
+    .toast.error { background: var(--error); }
 
     /* Footer */
     footer { background: var(--secondary); color: var(--white); padding: 5rem 5% 2rem; text-align: center; }
@@ -260,138 +482,584 @@
     footer p { color: rgba(255,255,255,0.5); margin-bottom: 0.5rem; }
     .footer-bottom { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); }
 
+    /* Responsive */
     @media (max-width: 1024px) {
       .hero-content { grid-template-columns: 1fr; text-align: center; }
       .hero p { margin: 0 auto 2rem; }
       .features-grid, .steps { grid-template-columns: 1fr 1fr; }
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .stats-grid, .vehicles-grid { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 768px) {
       header { flex-direction: column; gap: 1rem; }
       nav { gap: 1.5rem; }
-      .features-grid, .steps { grid-template-columns: 1fr; }
+      .features-grid, .steps, .stats-grid, .vehicles-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">AutoresQ <span>Rental</span></div>
-  <nav>
-    <a href="#features">Platform</a>
-    <a href="#how-it-works">How It Works</a>
-    <a href="#contact">Contact</a>
-  </nav>
-</header>
+<!-- Landing Page -->
+<div id="landing">
+  <header>
+    <a href="#" class="logo" onclick="showPage('landing')">AutoresQ <span>Rental</span></a>
+    <nav>
+      <a onclick="scrollToSection('features')">Platform</a>
+      <a onclick="scrollToSection('how-it-works')">How It Works</a>
+      <a onclick="openModal('login')">Login</a>
+      <a class="btn" onclick="openModal('signup')">Get Started</a>
+    </nav>
+  </header>
 
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-content">
-    <div class="hero-text">
-      <span class="hero-label">Enterprise Rental Platform</span>
-      <h1>The Future of<br><span>Car Rental</span></h1>
-      <p>Two-sided ecosystem connecting rental car companies with customers through branded white-label profiles. Streamlined booking, verification, and fleet management.</p>
-      <a href="#contact" class="btn">Get Started</a>
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-text">
+        <span class="hero-label">Enterprise Rental Platform</span>
+        <h1>The Future of<br><span>Car Rental</span></h1>
+        <p>Two-sided ecosystem connecting rental car companies with customers through branded white-label profiles. Streamlined booking, verification, and fleet management.</p>
+        <a class="btn" onclick="openModal('signup')">Get Started</a>
+      </div>
+      <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&h=800&fit=crop&crop=top" alt="Premium car">
+      </div>
     </div>
-    <div class="hero-image">
-      <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&h=800&fit=crop&crop=top" alt="Premium car">
-    </div>
-  </div>
-</section>
+  </section>
 
-<section class="section" id="features">
-  <div class="section-header">
-    <span class="section-label">Platform Features</span>
-    <h2 class="section-title">Everything You Need</h2>
-  </div>
-  <div class="features-grid">
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-      </div>
-      <h3>White-Label Profiles</h3>
-      <p>Each company gets a unique branded URL with zero platform visibility. Customers think they're dealing directly with the rental company.</p>
+  <section class="section" id="features">
+    <div class="section-header">
+      <span class="section-label">Platform Features</span>
+      <h2 class="section-title">Everything You Need</h2>
     </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
+    <div class="features-grid">
+      <div class="feature-card" onclick="openModal('signup')">
+        <div class="feature-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        </div>
+        <h3>White-Label Profiles</h3>
+        <p>Each company gets a unique branded URL with zero platform visibility.</p>
       </div>
-      <h3>Fleet Management</h3>
-      <p>Add vehicles with photos, pricing, and availability. Share inventory between companies and expand your offerings instantly.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+      <div class="feature-card" onclick="openModal('signup')">
+        <div class="feature-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
+        </div>
+        <h3>Fleet Management</h3>
+        <p>Add vehicles with photos, pricing, and availability management.</p>
       </div>
-      <h3>Verification System</h3>
-      <p>AI-powered ID, driver's license, and insurance verification. Automated calls to insurance providers for coverage validation.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      <div class="feature-card" onclick="openModal('signup')">
+        <div class="feature-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        </div>
+        <h3>Verification System</h3>
+        <p>AI-powered ID, license, and insurance verification.</p>
       </div>
-      <h3>Digital Contracts</h3>
-      <p>Built-in contract templates with digital signing. All documents automatically saved to the rental file.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      <div class="feature-card" onclick="openModal('signup')">
+        <div class="feature-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <h3>Digital Contracts</h3>
+        <p>Built-in contract templates with digital signing.</p>
       </div>
-      <h3>Roadside Assistance</h3>
-      <p>One-click roadside requests dispatch Auto Rescue with all rental data pre-loaded. Real-time tracking for customers.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+      <div class="feature-card" onclick="openModal('signup')">
+        <div class="feature-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <h3>Roadside Assistance</h3>
+        <p>One-click roadside requests dispatch with real-time tracking.</p>
       </div>
-      <h3>B2B Community</h3>
-      <p>Private network for rental companies. Share inventory, post updates, create groups, and do business within the platform.</p>
+      <div class="feature-card" onclick="openModal('signup')">
+        <div class="feature-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        </div>
+        <h3>B2B Community</h3>
+        <p>Private network for rental companies to share inventory.</p>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="section" id="how-it-works" style="background: var(--secondary);">
-  <div class="section-header">
-    <span class="section-label" style="color: var(--primary);">How It Works</span>
-    <h2 class="section-title" style="color: var(--white);">For Companies</h2>
-  </div>
-  <div class="steps">
-    <div class="step">
-      <div class="step-number">01</div>
-      <h3>Sign Up & Verify</h3>
-      <p>Register your business, upload documents, and get verified access to the platform.</p>
+  <section class="section" id="how-it-works" style="background: var(--secondary);">
+    <div class="section-header">
+      <span class="section-label" style="color: var(--primary);">How It Works</span>
+      <h2 class="section-title" style="color: var(--white);">For Companies</h2>
     </div>
-    <div class="step">
-      <div class="step-number">02</div>
-      <h3>Build Your Fleet</h3>
-      <p>Add vehicles with photos, pricing, and availability. Set your retail and broker rates.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">01</div>
+        <h3>Sign Up & Verify</h3>
+        <p>Register your business and get verified.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">02</div>
+        <h3>Build Your Fleet</h3>
+        <p>Add vehicles with pricing.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">03</div>
+        <h3>Share Your Link</h3>
+        <p>Get your white-label URL.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">04</div>
+        <h3>Manage & Grow</h3>
+        <p>Handle bookings and expand.</p>
+      </div>
     </div>
-    <div class="step">
-      <div class="step-number">03</div>
-      <h3>Share Your Link</h3>
-      <p>Get your unique white-label URL. Share with customers - they see only your brand.</p>
-    </div>
-    <div class="step">
-      <div class="step-number">04</div>
-      <h3>Manage & Grow</h3>
-      <p>Handle bookings, file claims, access the B2B community, and expand inventory.</p>
-    </div>
-  </div>
-</section>
+  </section>
 
-<footer id="contact">
-  <div class="logo">AutoresQ <span>Rental</span></div>
-  <p>Premium Car Rental Platform</p>
-  <p>Two-sided ecosystem for the rental car industry</p>
-  <div class="footer-bottom">
-    <p>&copy; 2026 AutoresQ Rental. All Rights Reserved.</p>
+  <footer id="contact">
+    <div class="logo">AutoresQ <span>Rental</span></div>
+    <p>Premium Car Rental Platform</p>
+    <p>Two-sided ecosystem for the rental car industry</p>
+    <div class="footer-bottom">
+      <p>&copy; 2026 AutoresQ Rental. All Rights Reserved.</p>
+    </div>
+  </footer>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard" class="dashboard">
+  <div class="dashboard-header">
+    <h1>Welcome back, <span id="userName">User</span></h1>
   </div>
-</footer>
+  <div class="dashboard-grid">
+    <div class="sidebar">
+      <ul class="sidebar-menu">
+        <li><a class="active" onclick="showDashboardSection('overview')">Overview</a></li>
+        <li><a onclick="showDashboardSection('vehicles')">My Vehicles</a></li>
+        <li><a onclick="showDashboardSection('rentals')">Rentals</a></li>
+        <li><a onclick="showDashboardSection('claims')">Claims</a></li>
+        <li><a onclick="showDashboardSection('community')">Community</a></li>
+        <li><a onclick="logout()">Logout</a></li>
+      </ul>
+    </div>
+    <div class="dashboard-content">
+      <!-- Overview Section -->
+      <div id="section-overview">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Total Vehicles</h3>
+            <div class="value" id="stat-vehicles">0</div>
+          </div>
+          <div class="stat-card">
+            <h3>Active Rentals</h3>
+            <div class="value" id="stat-rentals">0</div>
+          </div>
+          <div class="stat-card">
+            <h3>Pending Claims</h3>
+            <div class="value" id="stat-claims">0</div>
+          </div>
+          <div class="stat-card">
+            <h3>Revenue</h3>
+            <div class="value" id="stat-revenue">/bin/bash</div>
+          </div>
+        </div>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; margin-bottom: 1rem;">Recent Vehicles</h2>
+        <div class="vehicles-grid" id="vehicles-list">
+          <!-- Vehicles loaded dynamically -->
+        </div>
+      </div>
+
+      <!-- Vehicles Section -->
+      <div id="section-vehicles" style="display: none;">
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; margin-bottom: 1rem;">My Vehicles</h2>
+        <button class="btn" onclick="openModal('add-vehicle')" style="margin-bottom: 1rem;">+ Add Vehicle</button>
+        <div class="vehicles-grid" id="all-vehicles-list"></div>
+      </div>
+
+      <!-- Rentals Section -->
+      <div id="section-rentals" style="display: none;">
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; margin-bottom: 1rem;">Rentals</h2>
+        <div id="rentals-list"></div>
+      </div>
+
+      <!-- Claims Section -->
+      <div id="section-claims" style="display: none;">
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; margin-bottom: 1rem;">Claims</h2>
+        <button class="btn" onclick="openModal('add-claim')" style="margin-bottom: 1rem;">+ File Claim</button>
+        <div id="claims-list"></div>
+      </div>
+
+      <!-- Community Section -->
+      <div id="section-community" style="display: none;">
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; margin-bottom: 1rem;">Community</h2>
+        <div style="background: var(--white); padding: 2rem; border-radius: 12px; margin-bottom: 1rem;">
+          <textarea id="community-post" placeholder="Share something with the community..." style="width: 100%; height: 100px; padding: 1rem; border: 1px solid rgba(0,0,0,0.1); margin-bottom: 1rem;"></textarea>
+          <button class="btn" onclick="postCommunity()">Post</button>
+        </div>
+        <div id="community-posts"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Login Modal -->
+<div class="modal-overlay" id="modal-login">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h2>Welcome Back</h2>
+    <form onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="login-email" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-password" required>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn">Login</button>
+      </div>
+      <div class="form-footer">
+        Don't have an account? <a onclick="switchModal('login', 'signup')">Sign up</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Signup Modal -->
+<div class="modal-overlay" id="modal-signup">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h2>Get Started</h2>
+    <form onsubmit="handleSignup(event)">
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" id="signup-firstname" required>
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" id="signup-lastname" required>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="signup-email" required>
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" id="signup-phone">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="signup-password" required>
+      </div>
+      <div class="form-group">
+        <label>Account Type</label>
+        <select id="signup-role">
+          <option value="company">Rental Company</option>
+          <option value="customer">Customer</option>
+          <option value="broker">Broker</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn">Create Account</button>
+      </div>
+      <div class="form-footer">
+        Already have an account? <a onclick="switchModal('signup', 'login')">Login</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Vehicle Modal -->
+<div class="modal-overlay" id="modal-add-vehicle">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h2>Add Vehicle</h2>
+    <form onsubmit="handleAddVehicle(event)">
+      <div class="form-group">
+        <label>Make</label>
+        <input type="text" id="vehicle-make" required>
+      </div>
+      <div class="form-group">
+        <label>Model</label>
+        <input type="text" id="vehicle-model" required>
+      </div>
+      <div class="form-group">
+        <label>Year</label>
+        <input type="number" id="vehicle-year" required>
+      </div>
+      <div class="form-group">
+        <label>Color</label>
+        <input type="text" id="vehicle-color">
+      </div>
+      <div class="form-group">
+        <label>Retail Price ($)</label>
+        <input type="number" id="vehicle-price" required>
+      </div>
+      <div class="form-group">
+        <label>Broker Price ($)</label>
+        <input type="number" id="vehicle-broker-price">
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn">Add Vehicle</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Claim Modal -->
+<div class="modal-overlay" id="modal-add-claim">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h2>File Claim</h2>
+    <form onsubmit="handleAddClaim(event)">
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="claim-description" required></textarea>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn">Submit Claim</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
 <script>
+  // Supabase Configuration
+  const SUPABASE_URL = 'https://epjfkpzjekhzlqazfasu.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwamZrcHpqZWtoemxxYXpmYXN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDM5MDcsImV4cCI6MjA5NjAxOTkwN30.GsM73wJYIwcxEcTdifz18dZ5QpT5YXnp1v211fJ1IM4';
+  
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // State
+  let currentUser = null;
+  let currentCompany = null;
+
+  // Utilities
+  function showToast(message, type = '') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'toast ' + type;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function showPage(page) {
+    document.getElementById('landing').style.display = page === 'landing' ? 'block' : 'none';
+    document.getElementById('dashboard').classList.toggle('active', page === 'dashboard');
+  }
+
+  function openModal(modalId) {
+    document.getElementById('modal-' + modalId).classList.add('active');
+  }
+
+  function closeModal() {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+  }
+
+  function switchModal(from, to) {
+    closeModal();
+    setTimeout(() => openModal(to), 300);
+  }
+
+  // Auth
+  async function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      
+      currentUser = data.user;
+      await loadUserData();
+      closeModal();
+      showPage('dashboard');
+      showToast('Welcome back!', 'success');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function handleSignup(e) {
+    e.preventDefault();
+    const firstName = document.getElementById('signup-firstname').value;
+    const lastName = document.getElementById('signup-lastname').value;
+    const email = document.getElementById('signup-email').value;
+    const phone = document.getElementById('signup-phone').value;
+    const password = document.getElementById('signup-password').value;
+    const role = document.getElementById('signup-role').value;
+
+    try {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) throw error;
+
+      // Create user profile
+      await supabase.from('users').insert({
+        id: data.user.id,
+        email,
+        first_name: firstName,
+        last_name: lastName,
+        phone,
+        role
+      });
+
+      showToast('Account created! Please check your email.', 'success');
+      switchModal('signup', 'login');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  async function loadUserData() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    currentUser = user;
+    document.getElementById('userName').textContent = user.email.split('@')[0];
+
+    // Load stats
+    await loadDashboardData();
+  }
+
+  async function loadDashboardData() {
+    if (!currentUser) return;
+
+    // Get company
+    const { data: company } = await supabase
+      .from('companies')
+      .select('*')
+      .eq('id', currentUser.id)
+      .single();
+    
+    if (company) currentCompany = company;
+
+    // Get vehicles
+    const { data: vehicles } = await supabase
+      .from('vehicle_listings')
+      .select('*')
+      .eq('company_id', currentUser.id);
+
+    document.getElementById('stat-vehicles').textContent = vehicles?.length || 0;
+    renderVehicles(vehicles || []);
+  }
+
+  function renderVehicles(vehicles) {
+    const html = vehicles.map(v => `
+      <div class="vehicle-card">
+        <div class="vehicle-image">🚗</div>
+        <div class="vehicle-info">
+          <h3>${v.year} ${v.make} ${v.model}</h3>
+          <div class="price">${v.color || ''}</div>
+          <span class="status ${v.status}">${v.status}</span>
+        </div>
+      </div>
+    `).join('');
+    document.getElementById('vehicles-list').innerHTML = html || '<p>No vehicles yet. Add your first vehicle!</p>';
+  }
+
+  function showDashboardSection(section) {
+    document.querySelectorAll('.dashboard-content > div').forEach(d => d.style.display = 'none');
+    document.getElementById('section-' + section).style.display = 'block';
+  }
+
+  // Vehicle Management
+  async function handleAddVehicle(e) {
+    e.preventDefault();
+    if (!currentCompany) {
+      showToast('Please create a company first', 'error');
+      return;
+    }
+
+    const vehicle = {
+      company_id: currentCompany.id,
+      make: document.getElementById('vehicle-make').value,
+      model: document.getElementById('vehicle-model').value,
+      year: parseInt(document.getElementById('vehicle-year').value),
+      color: document.getElementById('vehicle-color').value,
+      retail_price: parseFloat(document.getElementById('vehicle-price').value),
+      broker_price: parseFloat(document.getElementById('vehicle-broker-price').value) || null,
+      status: 'active'
+    };
+
+    try {
+      const { error } = await supabase.from('vehicle_listings').insert(vehicle);
+      if (error) throw error;
+      
+      showToast('Vehicle added!', 'success');
+      closeModal();
+      await loadDashboardData();
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  // Claims
+  async function handleAddClaim(e) {
+    e.preventDefault();
+    if (!currentCompany) {
+      showToast('Please create a company first', 'error');
+      return;
+    }
+
+    const claim = {
+      company_id: currentCompany.id,
+      description: document.getElementById('claim-description').value,
+      status: 'filed'
+    };
+
+    try {
+      const { error } = await supabase.from('claims').insert(claim);
+      if (error) throw error;
+      
+      showToast('Claim filed!', 'success');
+      closeModal();
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  // Community
+  async function postCommunity() {
+    const content = document.getElementById('community-post').value;
+    if (!content || !currentCompany) {
+      showToast('Please login as a company to post', 'error');
+      return;
+    }
+
+    try {
+      const { error } = await supabase.from('community_posts').insert({
+        company_id: currentCompany.id,
+        content
+      });
+      if (error) throw error;
+      
+      showToast('Posted to community!', 'success');
+      document.getElementById('community-post').value = '';
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  function logout() {
+    supabase.auth.signOut();
+    currentUser = null;
+    currentCompany = null;
+    showPage('landing');
+    showToast('Logged out', 'success');
+  }
+
+  // Header scroll effect
   window.addEventListener('scroll', () => {
     const header = document.querySelector('header');
     if (window.scrollY > 50) header.classList.add('scrolled');
     else header.classList.remove('scrolled');
+  });
+
+  // Check auth on load
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (session) {
+      currentUser = session.user;
+      loadUserData();
+    }
   });
 </script>
 </body>
