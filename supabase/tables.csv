@@ -1,51 +1,51 @@
 table_name,column_name,data_type,constraints,default,description
-companies,id,uuid,PRIMARY KEY,uuid_generate_v4(),Unique identifier
-companies,slug,text,UNIQUE NOT NULL,,Company slug for URL
+companies,id,uuid,PRIMARY KEY,uuid_generate_v4,Unique ID
+companies,slug,text,UNIQUE NOT NULL,,Company slug
 companies,name,text,NOT NULL,,Company name
 companies,description,text,,,Company description
-companies,logo_url,text,,,URL to company logo
+companies,logo_url,text,,,Logo URL
 companies,primary_color,text,,#c9a227,Brand color
-companies,phone,text,,,Contact phone
-companies,email,text,,,Contact email
-companies,address,text,,,Company address
-companies,verified,boolean,,false,Is company verified
-companies,verified_at,timestamptz,,,When verified
-companies,is_broker,boolean,,false,Is broker company
-companies,created_at,timestamptz,,NOW(),Creation timestamp
-users,id,uuid,PRIMARY KEY,uuid_generate_v4(),Unique identifier
-users,email,text,UNIQUE NOT NULL,,User email
+companies,phone,text,,,Phone number
+companies,email,text,,,Email address
+companies,address,text,,,Physical address
+companies,verified,boolean,,false,Verified status
+companies,verified_at,timestamptz,,,Verification timestamp
+companies,is_broker,boolean,,false,Broker flag
+companies,created_at,timestamptz,,NOW,Created timestamp
+users,id,uuid,PRIMARY KEY,uuid_generate_v4,Unique ID
+users,email,text,UNIQUE NOT NULL,,Email address
 users,first_name,text,NOT NULL,,First name
 users,last_name,text,NOT NULL,,Last name
 users,phone,text,,,Phone number
 users,role,text,,customer,User role
-users,company_id,uuid,REFERENCES companies(id),,Foreign key to company
-users,created_at,timestamptz,,NOW(),Creation timestamp
-vehicle_listings,id,uuid,PRIMARY KEY,uuid_generate_v4(),Unique identifier
-vehicle_listings,company_id,uuid,NOT NULL REFERENCES companies(id),,Foreign key to company
+users,company_id,uuid,REFERENCES companies(id),,Company reference
+users,created_at,timestamptz,,NOW,Created timestamp
+vehicle_listings,id,uuid,PRIMARY KEY,uuid_generate_v4,Unique ID
+vehicle_listings,company_id,uuid,NOT NULL REFERENCES companies(id),,Company reference
 vehicle_listings,make,text,NOT NULL,,Vehicle make
 vehicle_listings,model,text,NOT NULL,,Vehicle model
-vehicle_listings,year,integer,NOT NULL,,Year
-vehicle_listings,color,text,,,Color
+vehicle_listings,year,integer,NOT NULL,,Year made
+vehicle_listings,color,text,,,Vehicle color
 vehicle_listings,retail_price,numeric(10,2),NOT NULL,,Retail price
 vehicle_listings,broker_price,numeric(10,2),,,Broker price
-vehicle_listings,status,text,,active,Status
-vehicle_listings,created_at,timestamptz,,NOW(),Creation timestamp
-rentals,id,uuid,PRIMARY KEY,uuid_generate_v4(),Unique identifier
-rentals,listing_id,uuid,REFERENCES vehicle_listings(id),,Foreign key to listing
-rentals,customer_id,uuid,REFERENCES users(id),,Foreign key to customer
-rentals,company_id,uuid,REFERENCES companies(id),,Foreign key to company
-rentals,start_date,date,NOT NULL,,Start date
-rentals,end_date,date,NOT NULL,,End date
+vehicle_listings,status,text,,active,Listing status
+vehicle_listings,created_at,timestamptz,,NOW,Created timestamp
+rentals,id,uuid,PRIMARY KEY,uuid_generate_v4,Unique ID
+rentals,listing_id,uuid,REFERENCES vehicle_listings(id),,Listing reference
+rentals,customer_id,uuid,REFERENCES users(id),,Customer reference
+rentals,company_id,uuid,REFERENCES companies(id),,Company reference
+rentals,start_date,date,NOT NULL,,Rental start
+rentals,end_date,date,NOT NULL,,Rental end
 rentals,total_amount,numeric(10,2),NOT NULL,,Total amount
-rentals,status,text,,pending,Status
-rentals,created_at,timestamptz,,NOW(),Creation timestamp
-claims,id,uuid,PRIMARY KEY,uuid_generate_v4(),Unique identifier
-claims,rental_id,uuid,REFERENCES rentals(id),,Foreign key to rental
-claims,company_id,uuid,REFERENCES companies(id),,Foreign key to company
+rentals,status,text,,pending,Rental status
+rentals,created_at,timestamptz,,NOW,Created timestamp
+claims,id,uuid,PRIMARY KEY,uuid_generate_v4,Unique ID
+claims,rental_id,uuid,REFERENCES rentals(id),,Rental reference
+claims,company_id,uuid,REFERENCES companies(id),,Company reference
 claims,description,text,,,Claim description
-claims,status,text,,filed,Status
-claims,created_at,timestamptz,,NOW(),Creation timestamp
-community_posts,id,uuid,PRIMARY KEY,uuid_generate_v4(),Unique identifier
-community_posts,company_id,uuid,REFERENCES companies(id),,Foreign key to company
+claims,status,text,,filed,Claim status
+claims,created_at,timestamptz,,NOW,Created timestamp
+community_posts,id,uuid,PRIMARY KEY,uuid_generate_v4,Unique ID
+community_posts,company_id,uuid,REFERENCES companies(id),,Company reference
 community_posts,content,text,NOT NULL,,Post content
-community_posts,created_at,timestamptz,,NOW(),Creation timestamp
+community_posts,created_at,timestamptz,,NOW,Created timestamp
