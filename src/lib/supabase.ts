@@ -62,7 +62,7 @@ export interface Rental {
   total_amount: number;
   status: 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled' | 'disputed';
   created_at: string;
-  listing?: VehicleListing;
+  listing?: VehicleListing | { make: string; model: string; year: number; images?: string[] };
 }
 
 export interface Claim {

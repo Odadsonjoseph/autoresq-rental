@@ -74,10 +74,11 @@ export default function RoadsidePage() {
 
     try {
       const { data: authUser } = await supabase.auth.getUser();
+      const userEmail = authUser?.user?.email;
       const { data: userData } = await supabase
         .from('users')
         .select('id')
-        .eq('email', authUser?.email)
+        .eq('email', userEmail)
         .single();
 
       const { error } = await supabase

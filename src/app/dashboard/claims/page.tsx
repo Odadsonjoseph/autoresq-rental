@@ -107,10 +107,11 @@ export default function ClaimsPage() {
 
     try {
       const { data: authUser } = await supabase.auth.getUser();
+      const userEmail = authUser?.user?.email;
       const { data: userData } = await supabase
         .from('users')
         .select('id, company_id')
-        .eq('email', authUser?.email)
+        .eq('email', userEmail)
         .single();
 
       const rentalData = rentals.find(r => r.id === formData.rental_id);
@@ -119,7 +120,7 @@ export default function ClaimsPage() {
         .from('claims')
         .insert({
           rental_id: formData.rental_id || null,
-          company_id: rentalData?.company_id || userData?.company_id,
+          company_id: userData?.company_id,
           description: formData.description,
           status: 'filed'
         });
