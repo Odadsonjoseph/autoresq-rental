@@ -11,7 +11,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [isSignUp, setIsSignUp] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,21 +18,12 @@ export default function LoginPage() {
     setError('');
 
     try {
-      if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-        });
-        if (error) throw error;
-        router.push('/dashboard');
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) throw error;
-        router.push('/dashboard');
-      }
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      router.push('/dashboard');
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : 'An error occurred';
       setError(errMsg);
@@ -47,15 +37,15 @@ export default function LoginPage() {
       <div className="auth-container">
         <div className="auth-card">
           <Link href="/" className="auth-logo">
-            AutoresQ Rental
+            AutoresQ <span>Rental</span>
           </Link>
-          <h1>{isSignUp ? 'Create Account' : 'Welcome Back'}</h1>
+          <h1>Welcome Back</h1>
           <p className="auth-subtitle">
-            {isSignUp ? 'Join the premier car rental platform' : 'Sign in to your account'}
+            Sign in to access your rental dashboard and manage your bookings
           </p>
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
-              <label>Email</label>
+              <label>Email Address</label>
               <input
                 type="email"
                 value={email}
@@ -71,20 +61,35 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="Enter password"
+                placeholder="Enter your password"
               />
             </div>
             {error && <div className="error-message">{error}</div>}
             <button type="submit" disabled={loading} className="btn-primary">
-              {loading ? 'Processing...' : isSignUp ? 'Sign Up' : 'Sign In'}
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
+          <div className="auth-divider">or</div>
           <p className="auth-switch">
-            {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-            <button type="button" onClick={() => setIsSignUp(!isSignUp)}>
-              {isSignUp ? 'Sign In' : 'Sign Up'}
-            </button>
+            Don&apos;t have an account?{' '}
+            <Link href="/auth/signup">
+              Create one
+            </Link>
           </p>
+          <div className="auth-features">
+            <div className="auth-feature">
+              <div className="auth-feature-icon">🔒</div>
+              <div className="auth-feature-text">Secure Login</div>
+            </div>
+            <div className="auth-feature">
+              <div className="auth-feature-icon">🚗</div>
+              <div className="auth-feature-text">Manage Fleet</div>
+            </div>
+            <div className="auth-feature">
+              <div className="auth-feature-icon">📊</div>
+              <div className="auth-feature-text">Real-time Analytics</div>
+            </div>
+          </div>
         </div>
       </div>
     </main>
