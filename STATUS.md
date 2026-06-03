@@ -17,3 +17,4 @@
 
 ## Project Location
 /root/autoresq-rental (via SSH)
+test
