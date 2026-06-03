@@ -60,8 +60,8 @@ export default function SignupPage() {
         <div className="auth-container">
           <div className="auth-card">
             <div style={{ textAlign: 'center', padding: '2rem 0' }}>
-              <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>✅</div>
-              <h1 style={{ marginBottom: '1rem' }}>Check Your Email</h1>
+              <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>✓</div>
+              <h1 style={{ marginBottom: '1rem', color: 'var(--white)' }}>Check Your Email</h1>
               <p className="auth-subtitle">
                 We&apos;ve sent a confirmation link to <strong>{email}</strong>.
                 Click the link to activate your account.
@@ -83,10 +83,12 @@ export default function SignupPage() {
           <Link href="/" className="auth-logo">
             AutoresQ <span>Rental</span>
           </Link>
+
           <h1>Create Account</h1>
           <p className="auth-subtitle">
             Join the premier car rental platform and start managing your fleet today
           </p>
+
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
               <label>Full Name</label>
@@ -96,8 +98,10 @@ export default function SignupPage() {
                 onChange={(e) => setFullName(e.target.value)}
                 required
                 placeholder="John Doe"
+                autoComplete="name"
               />
             </div>
+
             <div className="form-group">
               <label>Company Name (Optional)</label>
               <input
@@ -105,8 +109,10 @@ export default function SignupPage() {
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
                 placeholder="Your Company LLC"
+                autoComplete="organization"
               />
             </div>
+
             <div className="form-group">
               <label>Email Address</label>
               <input
@@ -115,8 +121,10 @@ export default function SignupPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="you@company.com"
+                autoComplete="email"
               />
             </div>
+
             <div className="form-group">
               <label>Password</label>
               <input
@@ -125,8 +133,10 @@ export default function SignupPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="At least 6 characters"
+                autoComplete="new-password"
               />
             </div>
+
             <div className="form-group">
               <label>Confirm Password</label>
               <input
@@ -135,31 +145,47 @@ export default function SignupPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 placeholder="Repeat your password"
+                autoComplete="new-password"
               />
             </div>
+
             {error && <div className="error-message">{error}</div>}
-            <button type="submit" disabled={loading} className="btn-primary">
+
+            <button type="submit" disabled={loading} className="btn-primary btn-full">
               {loading ? 'Creating account...' : 'Create Account'}
             </button>
           </form>
-          <div className="auth-divider">or</div>
-          <p className="auth-switch">
+
+          <div className="auth-footer">
             Already have an account?{' '}
-            <Link href="/auth/login">
-              Sign in
-            </Link>
-          </p>
+            <Link href="/auth/login">Sign in</Link>
+          </div>
+
+          <div className="auth-divider">or</div>
+
           <div className="auth-features">
             <div className="auth-feature">
-              <div className="auth-feature-icon">🌐</div>
+              <div className="auth-feature-icon">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                </svg>
+              </div>
               <div className="auth-feature-text">White-Label</div>
             </div>
             <div className="auth-feature">
-              <div className="auth-feature-icon">📱</div>
+              <div className="auth-feature-icon">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              </div>
               <div className="auth-feature-text">Mobile Ready</div>
             </div>
             <div className="auth-feature">
-              <div className="auth-feature-icon">⚡</div>
+              <div className="auth-feature-icon">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
               <div className="auth-feature-text">Quick Setup</div>
             </div>
           </div>
