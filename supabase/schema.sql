@@ -94,3 +94,23 @@ CREATE INDEX idx_companies_slug ON companies(slug);
 CREATE INDEX idx_listings_company ON vehicle_listings(company_id);
 CREATE INDEX idx_rentals_customer ON rentals(customer_id);
 CREATE INDEX idx_rentals_company ON rentals(company_id);
+
+-- CONTRACTS
+CREATE TABLE IF NOT EXISTS contracts (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  rental_id UUID REFERENCES rentals(id),
+  renter_id UUID REFERENCES users(id),
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  status contract_status DEFAULT 'draft',
+  signer_name TEXT,
+  signer_email TEXT,
+  signature_data TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  signed_at TIMESTAMPTZ
+);
+
+CREATE TYPE contract_status AS ENUM ('draft', 'pending', 'signed', 'expired');
+
+CREATE INDEX idx_contracts_renter ON contracts(renter_id);
+CREATE INDEX idx_contracts_rental ON contracts(rental_id);

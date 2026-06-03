@@ -91,6 +91,8 @@ export default function DashboardPage() {
             <Link href="/dashboard">Dashboard</Link>
             {isCompany && <Link href="/dashboard/fleet">Fleet</Link>}
             <Link href="/dashboard/rentals">Rentals</Link>
+            <Link href="/dashboard/verification">Verification</Link>
+            <Link href="/dashboard/contracts">Contracts</Link>
             {isCompany && <Link href="/dashboard/claims">Claims</Link>}
             {isCompany && <Link href="/dashboard/community">Community</Link>}
           </div>
