@@ -34,6 +34,7 @@ export interface User {
   license_verification: 'pending' | 'passed' | 'failed' | 'escalated';
   insurance_verification: 'pending' | 'passed' | 'failed' | 'escalated';
   created_at: string;
+  companies?: Company;
 }
 
 export interface VehicleListing {
@@ -48,6 +49,7 @@ export interface VehicleListing {
   broker_price?: number;
   status: 'active' | 'inactive' | 'reserved' | 'maintenance';
   created_at: string;
+  company?: Company;
 }
 
 export interface Rental {
@@ -60,15 +62,17 @@ export interface Rental {
   total_amount: number;
   status: 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled' | 'disputed';
   created_at: string;
+  listing?: VehicleListing;
 }
 
 export interface Claim {
   id: string;
-  rental_id: string;
-  company_id: string;
+  rental_id?: string;
+  company_id?: string;
   description?: string;
   status: 'filed' | 'under_review' | 'approved' | 'denied' | 'resolved';
   created_at: string;
+  rental?: Rental;
 }
 
 export interface CommunityPost {
@@ -77,4 +81,5 @@ export interface CommunityPost {
   content: string;
   images?: string[];
   created_at: string;
+  company?: Company;
 }
