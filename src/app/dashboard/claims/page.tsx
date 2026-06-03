@@ -109,7 +109,7 @@ export default function ClaimsPage() {
 
       const { data: userData } = await supabase
         .from('users')
-        .select('company_id, id')
+        .select('company_id, id, role')
         .eq('email', authUser.email)
         .single();
 
