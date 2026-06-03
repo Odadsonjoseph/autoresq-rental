@@ -18,34 +18,34 @@ users,first_name,text,NOT NULL,,First name
 users,last_name,text,NOT NULL,,Last name
 users,phone,text,,,Phone number
 users,role,text,,customer,User role
-users,company_id,uuid,REFERENCES companies(id),,关联公司
+users,company_id,uuid,REFERENCES companies(id),,Foreign key to company
 users,created_at,timestamptz,,NOW(),Creation timestamp
 vehicle_listings,id,uuid,PRIMARY KEY,uuid_generate_v4(),Unique identifier
-vehicle_listings,company_id,uuid,NOT NULL REFERENCES companies(id),,所属公司
-vehicle_listings,make,text,NOT NULL,,车辆品牌
-vehicle_listings,model,text,NOT NULL,,车型
-vehicle_listings,year,integer,NOT NULL,,年份
-vehicle_listings,color,text,,,颜色
-vehicle_listings,retail_price,numeric(10,2),NOT NULL,,零售价
-vehicle_listings,broker_price,numeric(10,2),,,批发价
-vehicle_listings,status,text,,active,状态
+vehicle_listings,company_id,uuid,NOT NULL REFERENCES companies(id),,Foreign key to company
+vehicle_listings,make,text,NOT NULL,,Vehicle make
+vehicle_listings,model,text,NOT NULL,,Vehicle model
+vehicle_listings,year,integer,NOT NULL,,Year
+vehicle_listings,color,text,,,Color
+vehicle_listings,retail_price,numeric(10,2),NOT NULL,,Retail price
+vehicle_listings,broker_price,numeric(10,2),,,Broker price
+vehicle_listings,status,text,,active,Status
 vehicle_listings,created_at,timestamptz,,NOW(),Creation timestamp
 rentals,id,uuid,PRIMARY KEY,uuid_generate_v4(),Unique identifier
-rentals,listing_id,uuid,REFERENCES vehicle_listings(id),,租赁车辆
-rentals,customer_id,uuid,REFERENCES users(id),,租车客户
-rentals,company_id,uuid,REFERENCES companies(id),,租车公司
-rentals,start_date,date,NOT NULL,,开始日期
-rentals,end_date,date,NOT NULL,,结束日期
-rentals,total_amount,numeric(10,2),NOT NULL,,总金额
-rentals,status,text,,pending,租赁状态
+rentals,listing_id,uuid,REFERENCES vehicle_listings(id),,Foreign key to listing
+rentals,customer_id,uuid,REFERENCES users(id),,Foreign key to customer
+rentals,company_id,uuid,REFERENCES companies(id),,Foreign key to company
+rentals,start_date,date,NOT NULL,,Start date
+rentals,end_date,date,NOT NULL,,End date
+rentals,total_amount,numeric(10,2),NOT NULL,,Total amount
+rentals,status,text,,pending,Status
 rentals,created_at,timestamptz,,NOW(),Creation timestamp
 claims,id,uuid,PRIMARY KEY,uuid_generate_v4(),Unique identifier
-claims,rental_id,uuid,REFERENCES rentals(id),,关联租赁
-claims,company_id,uuid,REFERENCES companies(id),,提出索赔的公司
-claims,description,text,,,索赔描述
-claims,status,text,,filed,索赔状态
+claims,rental_id,uuid,REFERENCES rentals(id),,Foreign key to rental
+claims,company_id,uuid,REFERENCES companies(id),,Foreign key to company
+claims,description,text,,,Claim description
+claims,status,text,,filed,Status
 claims,created_at,timestamptz,,NOW(),Creation timestamp
 community_posts,id,uuid,PRIMARY KEY,uuid_generate_v4(),Unique identifier
-community_posts,company_id,uuid,REFERENCES companies(id),,发帖公司
-community_posts,content,text,NOT NULL,,帖子内容
+community_posts,company_id,uuid,REFERENCES companies(id),,Foreign key to company
+community_posts,content,text,NOT NULL,,Post content
 community_posts,created_at,timestamptz,,NOW(),Creation timestamp
