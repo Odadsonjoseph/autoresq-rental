@@ -12,8 +12,6 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,12 +23,6 @@ export default function LoginPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: {
-            data: {
-              first_name: firstName,
-              last_name: lastName,
-            },
-          },
         });
         if (error) throw error;
         router.push('/dashboard');
@@ -42,8 +34,9 @@ export default function LoginPage() {
         if (error) throw error;
         router.push('/dashboard');
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : 'An error occurred';
+      setError(errMsg);
     } finally {
       setLoading(false);
     }
@@ -54,68 +47,38 @@ export default function LoginPage() {
       <div className="auth-container">
         <div className="auth-card">
           <Link href="/" className="auth-logo">
-            AutoresQ <span>Rental</span>
+            AutoresQ Rental
           </Link>
-
-          <h1>{isSignUp ? 'Create Account' : 'Welcome Back'</h1>
+          <h1>{isSignUp ? 'Create Account' : 'Welcome Back'}</h1>
           <p className="auth-subtitle">
-            {isSignUp
-              ? 'Join the premier car rental platform'
-              : 'Sign in to your account'}
+            {isSignUp ? 'Join the premier car rental platform' : 'Sign in to your account'}
           </p>
-
           <form onSubmit={handleSubmit} className="auth-form">
-            {isSignUp && (
-              <div className="form-row">
-                <div className="input-group">
-                  <label>First Name</label>
-                  <input
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="input-group">
-                  <label>Last Name</label>
-                  <input
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-            )}
-
-            <div className="input-group">
+            <div className="form-group">
               <label>Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                placeholder="you@example.com"
               />
             </div>
-
-            <div className="input-group">
+            <div className="form-group">
               <label>Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
+                placeholder="Enter password"
               />
             </div>
-
             {error && <div className="error-message">{error}</div>}
-
-            <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-              {loading ? 'Processing...' : isSignUp ? 'Create Account' : 'Sign In'}
+            <button type="submit" disabled={loading} className="btn-primary">
+              {loading ? 'Processing...' : isSignUp ? 'Sign Up' : 'Sign In'}
             </button>
           </form>
-
           <p className="auth-switch">
             {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
             <button type="button" onClick={() => setIsSignUp(!isSignUp)}>
