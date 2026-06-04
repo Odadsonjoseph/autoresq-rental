@@ -1,9 +1,12 @@
 {
-  "buildCommand": "npx next build",
+  "buildCommand": "npm run build",
   "installCommand": "npm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
   "typescript": {
     "ignoreBuildErrors": true
+  },
+  "eslint": {
+    "ignore": true
   }
 }

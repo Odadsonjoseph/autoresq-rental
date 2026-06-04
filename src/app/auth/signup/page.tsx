@@ -88,8 +88,6 @@ export default function SignupPage() {
 
         const companyData = await response.json();
         if (!response.ok) {
-          // Clean up auth user if company creation fails
-          await supabase.auth.deleteUser(authData.user.id);
           throw new Error(companyData.error || 'Failed to create company');
         }
       }
